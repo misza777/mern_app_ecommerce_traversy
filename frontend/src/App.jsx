@@ -7,13 +7,13 @@ import { Container } from "react-bootstrap";
 function App() {
   return (
     <>
-      <Container>
-        <Header />
-        <main className="py-3">
+      <Header />
+      <main className="py-3">
+        <Container>
           <h1>hello world</h1>
-        </main>
-        <Footer />
-      </Container>
+        </Container>
+      </main>
+      <Footer />
     </>
   );
 }
