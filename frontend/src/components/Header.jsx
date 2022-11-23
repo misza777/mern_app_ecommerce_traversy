@@ -28,7 +28,8 @@ const Header = () => {
                 <FaShoppingCart /> Cart
               </Nav.Link>
               <Nav.Link href="/login">
-                <FaUser /> Sign In
+                <FaUser />
+                <span> Sign In</span>
               </Nav.Link>
               <NavDropdown title="Dropdown" id="basic-nav-dropdown">
                 <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>

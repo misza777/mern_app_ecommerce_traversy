@@ -1,3 +1,29 @@
 main {
   min-height: 80vh;
 }
+
+.bold {
+  font-weight: bold;
+}
+
+/* 
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.menuIcon {
+  line-height: 100%;
+  align-self: flex-start;
+}
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.menuIcon {
+  line-height: 100%;
+  align-self: flex-start;
+} */
