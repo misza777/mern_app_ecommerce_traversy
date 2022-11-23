@@ -1,13 +1,11 @@
 import React from "react";
 import { FaStar, FaRegStar, FaStarHalfAlt } from "react-icons/fa";
-// import {Col, Row} from   "react-bootstrap";
+import PropTypes from "prop-types";
 
-const Rating = ({ value, text }) => {
+const Rating = ({ value, text, color }) => {
   return (
     <div className="rating my-3">
-      {value} from {text}
-      <br />
-      <span>
+      <span style={{ color }}>
         {value >= 1 ? (
           <FaStar />
         ) : value >= 0.5 ? (
@@ -16,7 +14,7 @@ const Rating = ({ value, text }) => {
           <FaRegStar />
         )}
       </span>
-      <span>
+      <span style={{ color }}>
         {value >= 2 ? (
           <FaStar />
         ) : value >= 1.5 ? (
@@ -25,7 +23,7 @@ const Rating = ({ value, text }) => {
           <FaRegStar />
         )}
       </span>
-      <span>
+      <span style={{ color }}>
         {value >= 3 ? (
           <FaStar />
         ) : value >= 2.5 ? (
@@ -34,7 +32,7 @@ const Rating = ({ value, text }) => {
           <FaRegStar />
         )}
       </span>
-      <span>
+      <span style={{ color }}>
         {value >= 4 ? (
           <FaStar />
         ) : value >= 3.5 ? (
@@ -43,7 +41,7 @@ const Rating = ({ value, text }) => {
           <FaRegStar />
         )}
       </span>
-      <span>
+      <span style={{ color }}>
         {value >= 5 ? (
           <FaStar />
         ) : value >= 4.5 ? (
@@ -52,9 +50,19 @@ const Rating = ({ value, text }) => {
           <FaRegStar />
         )}
       </span>
-      {/* <span>{text && text}</span> */}
+      <span> from {text && text}</span>
     </div>
   );
+};
+
+Rating.defaultProps = {
+  color: "#ffa317",
+};
+
+PropTypes.defaultProps = {
+  value: PropTypes.number.isRequired,
+  text: PropTypes.string.isRequired,
+  color: PropTypes.string,
 };
 
 export default Rating;

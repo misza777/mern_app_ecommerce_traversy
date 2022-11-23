@@ -6,6 +6,10 @@ main {
   font-weight: bold;
 }
 
+.rating span {
+  margin: .1em;
+}
+
 /* 
 .flex-center {
   display: flex;
