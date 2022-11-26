@@ -10,7 +10,7 @@ import {
   Container,
 } from "react-bootstrap";
 import Rating from "../components/Rating";
-import products from "../products";
+import products from "../../../backend/data/products";
 import { useParams } from "react-router-dom";
 
 const ProductScreen = () => {
