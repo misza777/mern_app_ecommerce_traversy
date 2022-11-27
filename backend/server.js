@@ -1,9 +1,10 @@
 import express from "express";
-import products from "./data/products.js";
 import dotenv from "dotenv";
 // trzeba dodac .js
 import connectDB from "./config/db.js";
 import colors from "colors";
+import productRoutes from "./routes/productRoutes.js";
+import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 
 dotenv.config();
 
@@ -11,17 +12,23 @@ connectDB();
 
 const app = express();
 
+// middleware
+// app.use((req,res, next) =>{
+//   console.log(res.oryginalUrl);
+//   next();
+// })
+
 app.get("/", (req, res) => {
   res.send("Hello from Express!, API is working");
 });
 
-app.get("/api/products", (req, res) => {
-  res.json(products);
-});
+app.use("/api/products", productRoutes);
 
-app.get("/api/products/:id", (req, res) => {
-  res.json(products.find((p) => p._id === req.params.id));
-});
+// error middleware
+app.use(notFound);
+
+//error middleware
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
