@@ -2,12 +2,13 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Row, Col } from "react-bootstrap";
 import Product from "../components/Product";
-// import axios from "axios";
 import { listProducts } from "../actions/productActions";
+import Loader from "../components/Loader";
+import Message from "../components/Message";
 
 const HomeScreen = () => {
   const dispatch = useDispatch();
-  // select state to use
+  // select part of state to use
   const productList = useSelector((state) => state.productList);
 
   const { loading, error, products } = productList;
@@ -16,13 +17,14 @@ const HomeScreen = () => {
     dispatch(listProducts());
   }, [dispatch]);
 
+  // check loading for spinner/loader
   return (
     <>
       <h1>Latest Products</h1>
       {loading ? (
-        <h2>Loading...</h2>
+          <Loader />
       ) : error ? (
-        <h3>{error}</h3>
+        <Message variant="danger">{error}</Message>
       ) : (
         <Row>
           {products.map((product) => (
