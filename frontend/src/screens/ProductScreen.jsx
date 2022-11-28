@@ -33,7 +33,6 @@ const ProductScreen = ({ history }) => {
   }, [dispatch]);
 
   const addToCartHandler = (id) => {
-    console.log(`adding ${id} product to cart`);
     navigate(`/cart/${id}?qty=${qty}`);
   };
 
@@ -120,7 +119,7 @@ const ProductScreen = ({ history }) => {
 
                   <ListGroup.Item>
                     <Button
-                      onClick={addToCartHandler}
+                      onClick={() => addToCartHandler(id)}
                       className="btn-block"
                       type="button"
                       disabled={product.countInStock === 0}
