@@ -31,7 +31,7 @@ const Header = () => {
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ml-auto">
               <LinkContainer to="/cart">
-                <Nav.Link>
+                <Nav.Link to="/cart">
                   <FaShoppingCart /> Cart
                 </Nav.Link>
               </LinkContainer>
