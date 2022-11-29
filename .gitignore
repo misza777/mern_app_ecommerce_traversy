@@ -15,7 +15,7 @@ dist-ssr
 
 .env
 /frontend/build
-/backend/build
+/frontend/node_modules
 
 # Editor directories and files
 .vscode/*
