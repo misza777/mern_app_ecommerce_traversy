@@ -5,6 +5,7 @@ import connectDB from "./config/db.js";
 import colors from "colors";
 import productRoutes from "./routes/productRoutes.js";
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
+import path from "path";
 
 dotenv.config();
 
@@ -18,11 +19,24 @@ const app = express();
 //   next();
 // })
 
-app.get("/", (req, res) => {
-  res.send("Hello from Express!, API is working");
-});
-
 app.use("/api/products", productRoutes);
+
+const __dirname = path.resolve();
+app.use("/uploads", express.static(path.join(__dirname, "/uploads")));
+
+//static folder in production
+if (process.env.NODE_ENV === "production") {
+  //set static folder /frontend/build
+  app.use(express.static(path.join(__dirname, "/frontend/build")));
+  //index.html for all page except those above
+  app.get("*", (req, res) =>
+    res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"))
+  );
+} else {
+  app.get("/", (req, res) => {
+    res.send("API is running...");
+  });
+}
 
 // error middleware
 app.use(notFound);

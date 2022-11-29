@@ -14,7 +14,8 @@ dist-ssr
 *.local
 
 .env
-/fontend/build
+/frontend/build
+/backend/build
 
 # Editor directories and files
 .vscode/*
