@@ -1,6 +1,6 @@
 import React from "react";
 import axios from "axios";
-import { CART_ADD_ITEM } from "../constants/cartConstants";
+import { CART_ADD_ITEM, CART_REMOVE_ITEM } from "../constants/cartConstants";
 
 export const addToCart = (id, qty) => async (dispatch, getState) => {
   const { data } = await axios.get(`/api/products/${id}`);
@@ -18,3 +18,11 @@ export const addToCart = (id, qty) => async (dispatch, getState) => {
   //in local storage we can only store strings
   localStorage.setItem("cartItems", JSON.stringify(getState().cart.cartItems));
 };
+
+export const removeFromCart = (id) => (dispatch, getState) => {
+  dispatch({
+    type: CART_REMOVE_ITEM,
+    payload: id,
+  });
+  localStorage.setItem("cartItems", JSON.stringify(getState().cart.cartItems));
+}
