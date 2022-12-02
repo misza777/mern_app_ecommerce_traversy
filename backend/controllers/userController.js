@@ -1,5 +1,6 @@
 import User from "../models/userModel.js";
 import asyncHandler from "express-async-handler";
+import generateToken from "../utils/generateToken.js";
 
 // @desc Auth user & get user
 // @route GET /api/users/login
@@ -8,7 +9,7 @@ const authUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
 
-  //bcrypt password is used in User model
+  //bcrypt password is used in User model and this is AUTHENTICATION
   //   if (user) {
   //     if (user.password === password) {
   //       res.json({
@@ -30,7 +31,7 @@ const authUser = asyncHandler(async (req, res) => {
       name: user.name,
       email: user.email,
       isAdmin: user.isAdmin,
-      token: null,
+      token: generateToken(user._id),
     });
   } else {
     res.status(401);
@@ -38,5 +39,7 @@ const authUser = asyncHandler(async (req, res) => {
   }
 });
 // const products = await User.create();
+
+// Authentication {email, pass} contra Authorizarion
 
 export { authUser };
