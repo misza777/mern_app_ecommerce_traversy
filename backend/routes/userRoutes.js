@@ -1,12 +1,11 @@
 import express from "express";
-import {
-  authUser,
-  //   getUserById,
-} from "../controllers/userController.js";
+import { authUser, getUserProfile } from "../controllers/userController.js";
+import { protect } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
 router.post("/login", authUser);
-// router.route("/:id").get(getProductById);
+//protect is a middleware - private route
+router.route("/profile").get(protect, getUserProfile);
 
 export default router;
