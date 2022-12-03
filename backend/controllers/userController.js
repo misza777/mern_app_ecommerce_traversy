@@ -9,21 +9,7 @@ const authUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
 
-  //bcrypt password is used in User model and this is AUTHENTICATION
-  //   if (user) {
-  //     if (user.password === password) {
-  //       res.json({
-  //         _id: user._id,
-  //         name: user.name,
-  //         email: user.email,
-  //         isAdmin: user.isAdmin,
-  //         token: null,
-  //       });
-  //     } else {
-  //       res.status(401);
-  //       throw new Error("Invalid password");
-  //     }
-  //   }
+  //bcrypt password is used in User model and this is
 
   if (user && (await user.matchPassword(password))) {
     res.json({
@@ -38,7 +24,6 @@ const authUser = asyncHandler(async (req, res) => {
     throw new Error("Invalid email or password");
   }
 });
-// const products = await User.create();
 
 // Authentication {email, pass} contra Authorizarion
 
@@ -62,4 +47,39 @@ const getUserProfile = asyncHandler(async (req, res) => {
   }
 });
 
-export { authUser, getUserProfile };
+// @desc Register new user
+// @route POST /api/users/
+// @access Public
+
+const registerUser = asyncHandler(async (req, res) => {
+  const { name, email, password } = req.body;
+
+  const userExists = await User.findOne({ email });
+
+  if (userExists) {
+    res.status(400);
+    throw new Error("User already exists");
+  }
+
+  //w modelu usera jest hashowanie hasla "pre" w mongoose
+  const user = await User.create({
+    name,
+    email,
+    password,
+  });
+
+  if (user) {
+    res.status(201).json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      isAdmin: user.isAdmin,
+      token: generateToken(user._id),
+    });
+  } else {
+    res.status(400);
+    throw new Error("Invalid user data");
+  }
+});
+
+export { authUser, getUserProfile, registerUser };
