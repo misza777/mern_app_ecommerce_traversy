@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Form, Button, Row, Col } from "react-bootstrap";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
@@ -52,7 +52,7 @@ const ProfileScreen = () => {
 
   return (
     <Row>
-      <Col md={3}>
+      <Col md={4}>
         <h2>User Profile</h2>
         {message && <Message variant="danger">{message}</Message>}{" "}
         {error && <Message variant="danger">{error}</Message>}
@@ -104,7 +104,7 @@ const ProfileScreen = () => {
           </Button>
         </Form>
       </Col>
-      <Col md={9}>
+      <Col md={8}>
         <h2>My Orders</h2>
       </Col>
     </Row>
