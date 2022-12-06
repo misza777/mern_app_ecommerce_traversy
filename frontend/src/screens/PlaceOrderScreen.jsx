@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import { Button, Row, Col, Image, Card, ListGroup } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import CheckoutSteps from "../components/CheckoutSteps";
 import Message from "../components/Message";
-// import { createOrder } from "../actions/orderActions";
+import { createOrder } from "../actions/orderActions";
 
 const PlaceOrderScreen = () => {
   const navigate = useNavigate();
@@ -33,18 +33,27 @@ const PlaceOrderScreen = () => {
     Number(cart.taxPrice)
   ).toFixed(2);
 
+  const orderCreate = useSelector((state) => state.orderCreate);
+  const { order, success, error } = orderCreate;
+
+  useEffect(() => {
+    if (success) {
+      navigate(`/order/${order._id}`);
+    }
+  }, [success, order]);
+
   const placeOrderHandler = () => {
-    // dispatch(
-    //   createOrder({
-    //     orderItems: cart.cartItems,
-    //     shippingAddress: cart.shippingAddress,
-    //     paymentMethod: cart.paymentMethod,
-    //     itemsPrice: cart.itemsPrice,
-    //     shippingPrice: cart.shippingPrice,
-    //     taxPrice: cart.taxPrice,
-    //     totalPrice: cart.totalPrice,
-    //   })
-    // )
+    dispatch(
+      createOrder({
+        orderItems: cart.cartItems,
+        shippingAddress: cart.shippingAddress,
+        paymentMethod: cart.paymentMethod,
+        itemsPrice: cart.itemsPrice,
+        shippingPrice: cart.shippingPrice,
+        taxPrice: cart.taxPrice,
+        totalPrice: cart.totalPrice,
+      })
+    );
   };
 
   return (
@@ -132,11 +141,12 @@ const PlaceOrderScreen = () => {
                 </Row>
               </ListGroup.Item>
               <ListGroup.Item>
+                {error && <Message variant="danger">{error}</Message>}
                 <Button
                   type="button"
                   className="btn-block"
                   disabled={cart.cartItems === 0}
-                  onClick={() => placeOrderHandler()}
+                  onClick={placeOrderHandler}
                 >
                   Proceed To Payment
                 </Button>
