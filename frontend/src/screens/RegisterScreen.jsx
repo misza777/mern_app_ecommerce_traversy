@@ -22,12 +22,12 @@ const RegisterScreen = () => {
   const navigate = useNavigate();
   let location = useLocation();
 
-  //   console.log(location);
+    console.log(location);
 
   //???
   const redirect = location.search ? location.search.split("=")[1] : "/";
 
-  //   console.log(redirect);
+    console.log(redirect);
 
   useEffect(() => {
     if (userInfo) {

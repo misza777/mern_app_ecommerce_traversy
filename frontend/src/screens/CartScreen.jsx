@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useContext } from "react";
 import {
   useParams,
   useSearchParams,
@@ -33,6 +33,7 @@ const CartScreen = () => {
   const cart = useSelector((state) => state.cart);
   const { cartItems } = cart;
 
+
   useEffect(() => {
     if (productId) {
       dispatch(addToCart(productId, qty));
@@ -44,7 +45,7 @@ const CartScreen = () => {
   };
 
   const checkoutHandler = () => {
-    navigate("/shipping");
+    navigate("/login?redirect=/shipping");
   };
 
   return (

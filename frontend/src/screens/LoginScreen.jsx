@@ -22,7 +22,7 @@ const LoginScreen = () => {
 
   console.log(location);
 
-  //???
+  //dziala :)
   const redirect = location.search ? location.search.split("=")[1] : "/";
 
   console.log(redirect);
@@ -32,8 +32,6 @@ const LoginScreen = () => {
       navigate(redirect);
     }
   }, [userInfo, redirect]);
-
-  //czy dodac location do useEffect???
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -77,7 +75,14 @@ const LoginScreen = () => {
       <Row className="py-3">
         <Col>
           New Customer?{" "}
-          <Link to={redirect ? `/register?redirect=${redirect}` : "/register"}>
+          <Link
+            to={
+              redirect
+                ? `/register?redirect=
+          ${redirect}`
+                : "/register"
+            }
+          >
             Register
           </Link>
         </Col>
