@@ -5,12 +5,12 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import HomeScreen from "./screens/HomeScreen";
 import ProductScreen from "./screens/ProductScreen";
-// import Cart from "./screens/Cart";
 import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
 import ProfileScreen from "./screens/ProfileScreen";
 import CartScreen from "./screens/CartScreen";
 import ShippingScreen from "./screens/ShippingScreen";
+import PaymentScreen from "./screens/PaymentScreen";
 
 function App() {
   return (
@@ -27,6 +27,7 @@ function App() {
             <Route path="/register" element={<RegisterScreen />} />
             <Route path="/shipping" element={<ShippingScreen />} />
             <Route path="/login" element={<LoginScreen />} />
+            <Route path="/payment" element={<PaymentScreen />} />
           </Routes>
         </Container>
       </main>

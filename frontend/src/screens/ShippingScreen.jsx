@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { saveShippingAddress } from "../actions/cartActions";
 import CheckoutSteps from "../components/CheckoutSteps";
 
-const ShippingScreen = ({}) => {
+const ShippingScreen = () => {
   const cart = useSelector((state) => state.cart);
   const { shippingAddress } = cart;
   const [address, setAddress] = useState(shippingAddress.address);
