@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Row, Col, Image, Card, ListGroup } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -6,14 +6,23 @@ import { useNavigate, useParams } from "react-router-dom";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
 import { getOrderDetails } from "../actions/orderActions";
+import axios from "axios";
 
 const OrderScreen = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { id } = useParams();
 
+  const [sdkReady, setSdkReady] = useState(false);
+
   const orderDetails = useSelector((state) => state.orderDetails);
   const { order, loading, error } = orderDetails;
+
+  const orderPay = useSelector((state) => state.orderPay);
+  //renaming
+  const { loading: loadingPay, success: successPay } = orderPay;
+
+  //   // Calculate prices
   // ???
   //   if (!loading) {
   //     const addDecimals = (num) => {
@@ -24,13 +33,30 @@ const OrderScreen = () => {
   //       order.orderItems.reduce((acc, item) => acc + item.price * item.qty, 0)
   //     );
   //   }
-  
+
   //check last recent order
   useEffect(() => {
-    if (!order || order._id !== id) {
+    const addPayPalScript = async () => {
+      const { data: clientId } = await axios.get("/api/config/paypal");
+      const script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}`;
+      script.async = true;
+      script.onload = () => {
+        setSdkReady(true);
+      };
+    };
+
+    if (!order || order._id !== id || successPay) {
       dispatch(getOrderDetails(id));
+    } else if (!order.isPaid) {
+      if (!window.paypal) {
+        addPayPalScript();
+      } else {
+        setSdkReady(true);
+      }
     }
-  }, [id, order]);
+  }, [dispatch, id, order, successPay]);
 
   return loading ? (
     <Loader />
