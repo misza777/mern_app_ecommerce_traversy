@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Button, Row, Col, Image, Card, ListGroup } from "react-bootstrap";
+import { Row, Col, Image, Card, ListGroup } from "react-bootstrap";
+import { PayPalButton } from "react-paypal-button-v2";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
-import { getOrderDetails } from "../actions/orderActions";
+import { getOrderDetails, payOrder } from "../actions/orderActions";
 import axios from "axios";
+import { ORDER_PAY_RESET } from "../constants/orderConstants";
 
 const OrderScreen = () => {
   const navigate = useNavigate();
@@ -22,7 +24,7 @@ const OrderScreen = () => {
   //renaming
   const { loading: loadingPay, success: successPay } = orderPay;
 
-  //   // Calculate prices
+  //   // Calculate prices again?
   // ???
   //   if (!loading) {
   //     const addDecimals = (num) => {
@@ -45,9 +47,12 @@ const OrderScreen = () => {
       script.onload = () => {
         setSdkReady(true);
       };
+      document.body.appendChild(script);
     };
 
     if (!order || order._id !== id || successPay) {
+      //avoid infinite loop ktory robi useEffect!!!
+      dispatch({ type: ORDER_PAY_RESET });
       dispatch(getOrderDetails(id));
     } else if (!order.isPaid) {
       if (!window.paypal) {
@@ -57,6 +62,11 @@ const OrderScreen = () => {
       }
     }
   }, [dispatch, id, order, successPay]);
+
+  const successPaymentHandler = (paymentResult) => {
+    console.log(paymentResult);
+    dispatch(payOrder(id, paymentResult));
+  };
 
   return loading ? (
     <Loader />
@@ -171,15 +181,15 @@ const OrderScreen = () => {
               </ListGroup.Item>
               {!order.isPaid && (
                 <ListGroup.Item>
-                  {/* {loadingPay && <Loader />} */}
-                  {/* {!sdkReady ? (
+                  {loadingPay && <Loader />}
+                  {!sdkReady ? (
                     <Loader />
                   ) : (
                     <PayPalButton
                       amount={order.totalPrice}
                       onSuccess={successPaymentHandler}
                     />
-                  )} */}
+                  )}
                 </ListGroup.Item>
               )}
               {/* {loadingDeliver && <Loader />} */}

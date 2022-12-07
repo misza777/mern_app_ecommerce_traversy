@@ -81,4 +81,18 @@ const updateOrderToPaid = asyncHandler(async (req, res) => {
   }
 });
 
-export { addOrderItems, getOrderById, updateOrderToPaid };
+// @desc GET logged in orders
+// @route GET /api/orders/myorders
+// @access Private
+
+const getMyOrders = asyncHandler(async (req, res) => {
+  const orders = await Order.find({ user: req.user._id });
+  if (orders.length > 0) {
+    res.json(orders);
+  } else {
+    res.status(404);
+    throw new Error("You have no orders yet");
+  }
+});
+
+export { addOrderItems, getOrderById, updateOrderToPaid, getMyOrders };
