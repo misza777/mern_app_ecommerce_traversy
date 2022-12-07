@@ -25,7 +25,7 @@ const LoginScreen = () => {
   //dziala :)
   const redirect = location.search ? location.search.split("=")[1] : "/";
 
-  console.log(redirect);
+  // console.log(redirect);
 
   useEffect(() => {
     if (userInfo) {
