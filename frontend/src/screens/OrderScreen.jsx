@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Row, Col, Image, Card, ListGroup } from "react-bootstrap";
-import { PayPalButton } from "react-paypal-button-v2";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
@@ -9,13 +8,14 @@ import Loader from "../components/Loader";
 import { getOrderDetails, payOrder } from "../actions/orderActions";
 import axios from "axios";
 import { ORDER_PAY_RESET } from "../constants/orderConstants";
+import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 
 const OrderScreen = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { id } = useParams();
 
-  const [sdkReady, setSdkReady] = useState(false);
+  const [paypalClientId, setPaypalClientId] = useState("");
 
   const orderDetails = useSelector((state) => state.orderDetails);
   const { order, loading, error } = orderDetails;
@@ -23,6 +23,13 @@ const OrderScreen = () => {
   const orderPay = useSelector((state) => state.orderPay);
   //renaming
   const { loading: loadingPay, success: successPay } = orderPay;
+
+  const initialPaypalOptions = {
+    "client-id": paypalClientId,
+    currency: "USD",
+    intent: "capture",
+    // "data-client-token": "abc123xyz==",
+  };
 
   //   // Calculate prices again?
   // ???
@@ -38,30 +45,23 @@ const OrderScreen = () => {
 
   //check last recent order
   useEffect(() => {
-    const addPayPalScript = async () => {
-      const { data: clientId } = await axios.get("/api/config/paypal");
-      const script = document.createElement("script");
-      script.type = "text/javascript";
-      script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}`;
-      script.async = true;
-      script.onload = () => {
-        setSdkReady(true);
-      };
-      document.body.appendChild(script);
+    //getting client-id from backend
+    const getPayapalClientId = async () => {
+      if (!paypalClientId) {
+        const res = await axios.get("/api/config/paypal");
+        const clientId = res.data;
+        console.log(clientId);
+        setPaypalClientId(clientId);
+      }
     };
+    getPayapalClientId();
 
     if (!order || order._id !== id || successPay) {
       //avoid infinite loop ktory robi useEffect!!!
       dispatch({ type: ORDER_PAY_RESET });
       dispatch(getOrderDetails(id));
-    } else if (!order.isPaid) {
-      if (!window.paypal) {
-        addPayPalScript();
-      } else {
-        setSdkReady(true);
-      }
     }
-  }, [dispatch, id, order, successPay]);
+  }, [dispatch, id, order, successPay, paypalClientId]);
 
   const successPaymentHandler = (paymentResult) => {
     console.log(paymentResult);
@@ -182,13 +182,44 @@ const OrderScreen = () => {
               {!order.isPaid && (
                 <ListGroup.Item>
                   {loadingPay && <Loader />}
-                  {!sdkReady ? (
+                  {!paypalClientId ? (
                     <Loader />
                   ) : (
-                    <PayPalButton
-                      amount={order.totalPrice}
-                      onSuccess={successPaymentHandler}
-                    />
+                    <PayPalScriptProvider options={initialPaypalOptions}>
+                      <PayPalButtons
+                        // amount={order.totalPrice}
+                        style={{ layout: "vertical" }}
+                        createOrder={(data, actions) => {
+                          return actions.order
+                            .create({
+                              purchase_units: [
+                                {
+                                  amount: {
+                                    value: order.totalPrice,
+                                  },
+                                },
+                              ],
+                            })
+                            .then((orderId) => {
+                              // Your code here after create the order
+                              return orderId;
+                            });
+                        }}
+                        onApprove={function (data, actions) {
+                          // This function captures the funds from the transaction.
+                          return actions.order
+                            .capture()
+                            .then(function (details) {
+                              // This function shows a transaction success message to your buyer.
+                              alert(
+                                "Transaction completed by " +
+                                  details.payer.name.given_name
+                              );
+                              successPaymentHandler(details);
+                            });
+                        }}
+                      />
+                    </PayPalScriptProvider>
                   )}
                 </ListGroup.Item>
               )}
