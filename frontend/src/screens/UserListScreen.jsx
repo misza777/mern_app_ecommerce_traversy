@@ -6,7 +6,7 @@ import Loader from "../components/Loader";
 import { listUsers, deleteUser } from "../actions/userActions";
 import { useDispatch, useSelector } from "react-redux";
 import { FaTimes, FaCheck, FaEdit, FaTrash } from "react-icons/fa";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const UserListScreen = () => {
   const dispatch = useDispatch();
@@ -27,12 +27,12 @@ const UserListScreen = () => {
     } else {
       navigate("/login");
     }
-  }, [dispatch, successDelete]);
+  }, [dispatch, successDelete, userInfo]);
 
   const deleteHandler = (id) => {
-    // if (window.confirm("Are you sure?")) {
-    dispatch(deleteUser(id));
-    // }
+    if (window.confirm("Are you sure?")) {
+      dispatch(deleteUser(id));
+    }
   };
 
   return (
@@ -77,7 +77,7 @@ const UserListScreen = () => {
                   <Button
                     variant="danger"
                     className="btn-sm"
-                    onClick={()=> deleteHandler(user._id)}
+                    onClick={() => deleteHandler(user._id)}
                   >
                     <FaTrash />
                   </Button>
