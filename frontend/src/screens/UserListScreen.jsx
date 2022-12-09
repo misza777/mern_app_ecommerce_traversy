@@ -6,15 +6,24 @@ import Loader from "../components/Loader";
 import { listUsers } from "../actions/userActions";
 import { useDispatch, useSelector } from "react-redux";
 import { FaTimes, FaCheck, FaEdit, FaTrash } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const UserListScreen = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const userList = useSelector((state) => state.userList);
   const { loading, error, users } = userList;
 
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo } = userLogin;
+
   useEffect(() => {
-    dispatch(listUsers());
+    if (userInfo && userInfo.isAdmin) {
+      dispatch(listUsers());
+    } else {
+      navigate("/login");
+    }
   }, [dispatch]);
 
   const deleteHandler = (id) => {
