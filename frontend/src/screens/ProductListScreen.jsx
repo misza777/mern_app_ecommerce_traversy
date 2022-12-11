@@ -1,19 +1,25 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { LinkContainer } from "react-router-bootstrap";
 import { Table, Button, Row, Col } from "react-bootstrap";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
+// import Paginate from '../components/Paginate'
 import {
   listProducts,
-  // deleteProduct
+  deleteProduct,
+  // createProduct,
 } from "../actions/productActions";
 import { useDispatch, useSelector } from "react-redux";
-import { FaTimes, FaCheck, FaEdit, FaTrash, FaPlus } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
+import { useNavigate, useParams } from "react-router-dom";
+// import { PRODUCT_CREATE_RESET } from "../constants/productConstants";
 
 const ProductListScreen = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  // const { pageNumber } = useParams()
+
+  // const pageNumber = match.params.pageNumber || 1
 
   const productList = useSelector((state) => state.productList);
   const { loading, error, products } = productList;
@@ -21,20 +27,28 @@ const ProductListScreen = () => {
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
-  // const productDelete = useSelector((state) => state.productDelete);
-  // const { success: successDelete } = productDelete;
+  const productDelete = useSelector((state) => state.productDelete);
+  const {
+    success: successDelete,
+    loading: loadingDelete,
+    error: errorDelete,
+  } = productDelete;
 
   useEffect(() => {
+    // dispatch({ type: PRODUCT_CREATE_RESET });
+
     if (userInfo && userInfo.isAdmin) {
       dispatch(listProducts());
     } else {
       navigate("/login");
     }
-  }, [dispatch, userInfo]);
+  }, [dispatch, userInfo, successDelete]);
+
+  //successDelete jest w dependencies bo jak sie pojawi to chcemy odswiezyc liste produktow
 
   const deleteHandler = (id) => {
     if (window.confirm("Are you sure?")) {
-      // dispatch(deleteProduct(id));
+      dispatch(deleteProduct(id));
     }
   };
 
@@ -54,6 +68,8 @@ const ProductListScreen = () => {
           </Button>
         </Col>
       </Row>
+      {loadingDelete && <Loader />}
+      {errorDelete && <Message variant="danger">{errorDelete}</Message>}
       {loading ? (
         <Loader />
       ) : error ? (
