@@ -7,12 +7,12 @@ import Loader from "../components/Loader";
 import {
   listProducts,
   deleteProduct,
-  // createProduct,
+  createProduct,
 } from "../actions/productActions";
 import { useDispatch, useSelector } from "react-redux";
 import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
-// import { PRODUCT_CREATE_RESET } from "../constants/productConstants";
+import { PRODUCT_CREATE_RESET } from "../constants/productConstants";
 
 const ProductListScreen = () => {
   const dispatch = useDispatch();
@@ -34,15 +34,26 @@ const ProductListScreen = () => {
     error: errorDelete,
   } = productDelete;
 
-  useEffect(() => {
-    // dispatch({ type: PRODUCT_CREATE_RESET });
+  const productCreate = useSelector((state) => state.productCreate);
+  const {
+    success: successCreate,
+    loading: loadingCreate,
+    error: errorCreate,
+    product: createdProduct,
+  } = productCreate;
 
-    if (userInfo && userInfo.isAdmin) {
-      dispatch(listProducts());
-    } else {
+  useEffect(() => {
+    dispatch({ type: PRODUCT_CREATE_RESET });
+
+    if (!userInfo || !userInfo.isAdmin) {
       navigate("/login");
     }
-  }, [dispatch, userInfo, successDelete]);
+    if (successCreate) {
+      navigate(`/admin/product/${createdProduct._id}/edit`);
+    } else {
+      dispatch(listProducts());
+    }
+  }, [dispatch, userInfo, successDelete, successCreate, createdProduct]);
 
   //successDelete jest w dependencies bo jak sie pojawi to chcemy odswiezyc liste produktow
 
@@ -52,8 +63,8 @@ const ProductListScreen = () => {
     }
   };
 
-  const createProductHandler = (product) => {
-    // dispatch(createProduct);
+  const createProductHandler = () => {
+    dispatch(createProduct());
   };
 
   return (
@@ -70,6 +81,8 @@ const ProductListScreen = () => {
       </Row>
       {loadingDelete && <Loader />}
       {errorDelete && <Message variant="danger">{errorDelete}</Message>}
+      {loadingCreate && <Loader />}
+      {errorCreate && <Message variant="danger">{errorCreate}</Message>}
       {loading ? (
         <Loader />
       ) : error ? (
