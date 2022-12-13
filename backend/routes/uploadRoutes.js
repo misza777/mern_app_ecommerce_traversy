@@ -1,11 +1,11 @@
 import express from "express";
 import multer from "multer";
-const router = express.Router();
 import path from "path";
+const router = express.Router();
 
 const storage = multer.diskStorage({
   destination(req, file, cb) {
-    cb(null, "uploads/");
+    cb(null, "frontend/public/uploads/");
   },
   //daje oryginalne nazwy plików z rozszerzeniem
   filename(req, file, cb) {
@@ -17,16 +17,15 @@ const storage = multer.diskStorage({
 });
 
 function checkFileType(file, cb) {
-  const filetypes = /jpg|jpeg|png|gif|svg/;
-//   test rozszerzen 
+  const filetypes = /jpg|jpeg|png|gif|svg|webp/;
+  //   test rozszerzen
   const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-
   const mimetype = filetypes.test(file.mimetype);
 
   if (mimetype && extname) {
     return cb(null, true);
   } else {
-    cb("Images only please!");
+    cb("Upload images only please!");
   }
 }
 
@@ -37,8 +36,9 @@ const upload = multer({
   },
 });
 
-router.post('/', upload.single('image'), (req, res) => {
-    res.send(`/${req.file.path}`);
+router.post("/", upload.single("image"), (req, res) => {
+  // console.log(req.file.filename);
+  res.send(`/uploads/${req.file.filename}`);
 });
 
 export default router;

@@ -16,14 +16,20 @@ connectDB();
 
 const app = express();
 
-// middleware
-// app.use((req,res, next) =>{
-//   console.log(res.oryginalUrl);
-//   next();
-// })
-
 //allows to accept json data in the body
 app.use(express.json());
+
+// middleware logging path and method
+app.use((req, res, next) => {
+  console.log(req.path, req.method);
+  next();
+});
+
+// __dirname - current directory
+// path.join - join current directory with /uploads
+// express.static - make uploads folder static
+const __dirname = path.resolve();
+app.use("/uploads", express.static(path.join(__dirname, "/uploads")));
 
 app.use("/api/products", productRoutes);
 app.use("/api/users", userRoutes);
@@ -33,12 +39,6 @@ app.use("/api/upload", uploadRoutes);
 app.get("/api/config/paypal", (req, res) =>
   res.send(process.env.PAYPAL_CLIENT_ID)
 );
-
-// __dirname - current directory
-// path.join - join current directory with /uploads
-// express.static - make uploads folder static
-const __dirname = path.resolve();
-app.use("/uploads", express.static(path.join(__dirname, "/uploads")));
 
 //deployment to heroku
 //static folder in production
@@ -54,12 +54,12 @@ if (process.env.NODE_ENV === "production") {
     res.send("API is running...");
   });
 }
-
 // error middleware
 app.use(notFound);
 
 //error middleware
 app.use(errorHandler);
+//routes
 
 const PORT = process.env.PORT || 5000;
 
