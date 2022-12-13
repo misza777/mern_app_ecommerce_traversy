@@ -1,13 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { Row, Col, Image, Card, ListGroup } from "react-bootstrap";
+import { Row, Col, Image, Card, ListGroup, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
-import { getOrderDetails, payOrder } from "../actions/orderActions";
+import {
+  getOrderDetails,
+  payOrder,
+  deliverOrder,
+} from "../actions/orderActions";
 import axios from "axios";
-import { ORDER_PAY_RESET } from "../constants/orderConstants";
+import {
+  ORDER_PAY_RESET,
+  ORDER_DELIVER_RESET,
+} from "../constants/orderConstants";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 
 const OrderScreen = () => {
@@ -23,6 +30,12 @@ const OrderScreen = () => {
   const orderPay = useSelector((state) => state.orderPay);
   //renaming
   const { loading: loadingPay, success: successPay } = orderPay;
+
+  const orderDeliver = useSelector((state) => state.orderDeliver);
+  const { loading: loadingDeliver, success: successDeliver } = orderDeliver;
+
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo } = userLogin;
 
   const initialPaypalOptions = {
     "client-id": paypalClientId,
@@ -44,7 +57,7 @@ const OrderScreen = () => {
   //   }
 
   //check last recent order
-  
+
   useEffect(() => {
     //getting client-id from backend
     const getPayapalClientId = async () => {
@@ -57,16 +70,21 @@ const OrderScreen = () => {
     };
     getPayapalClientId();
 
-    if (!order || order._id !== id || successPay) {
+    if (!order || order._id !== id || successPay || successDeliver) {
       //avoid infinite loop ktory robi useEffect!!!
       dispatch({ type: ORDER_PAY_RESET });
+      dispatch({ type: ORDER_DELIVER_RESET });
       dispatch(getOrderDetails(id));
     }
-  }, [dispatch, id, order, successPay, paypalClientId]);
+  }, [dispatch, id, order, successPay, successDeliver, paypalClientId]);
 
   const successPaymentHandler = (paymentResult) => {
     console.log(paymentResult);
     dispatch(payOrder(id, paymentResult));
+  };
+
+  const deliverHandler = () => {
+    dispatch(deliverOrder);
   };
 
   return loading ? (
@@ -224,8 +242,8 @@ const OrderScreen = () => {
                   )}
                 </ListGroup.Item>
               )}
-              {/* {loadingDeliver && <Loader />} */}
-              {/* {userInfo &&
+              {loadingDeliver && <Loader />}
+              {userInfo &&
                 userInfo.isAdmin &&
                 order.isPaid &&
                 !order.isDelivered && (
@@ -238,7 +256,7 @@ const OrderScreen = () => {
                       Mark As Delivered
                     </Button>
                   </ListGroup.Item>
-                )} */}
+                )}
             </ListGroup>
           </Card>
         </Col>

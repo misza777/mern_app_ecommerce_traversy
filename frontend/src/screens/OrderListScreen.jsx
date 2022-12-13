@@ -1,14 +1,12 @@
 import React, { useEffect } from "react";
 import { LinkContainer } from "react-router-bootstrap";
-import { Table, Button, Row, Col } from "react-bootstrap";
+import { Table, Button, Col } from "react-bootstrap";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
-// import Paginate from '../components/Paginate'
 import { listAllOrders } from "../actions/orderActions";
 import { useDispatch, useSelector } from "react-redux";
-import { FaEdit, FaTrash, FaPlus, FaTimes } from "react-icons/fa";
-import { useNavigate, useParams } from "react-router-dom";
-// import { PRODUCT_CREATE_RESET } from "../constants/productConstants";
+import { FaTimes } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const OrderListScreen = () => {
   const dispatch = useDispatch();
@@ -20,13 +18,13 @@ const OrderListScreen = () => {
 
   // orders update check
   const orderListAll = useSelector((state) => state.orderListAll);
-  const { loading: loadingOrders, error: errorOrders, orders } = orderListAll;
+  const { loading, error, orders } = orderListAll;
 
   useEffect(() => {
-    if (!userInfo) {
-      navigate("/login");
-    } else {
-      dispatch(listAllOrders());
+    {
+      userInfo && userInfo.isAdmin
+        ? dispatch(listAllOrders())
+        : navigate("/login");
     }
   }, [userInfo, dispatch]);
 
@@ -34,15 +32,16 @@ const OrderListScreen = () => {
     <>
       <Col>
         <h2>All Orders</h2>
-        {loadingOrders ? (
+        {loading ? (
           <Loader />
-        ) : errorOrders ? (
-          <Message variant="danger">{errorOrders}</Message>
+        ) : error ? (
+          <Message variant="danger">{error}</Message>
         ) : (
           <Table striped bordered hover responsive className="table-sm">
             <thead>
               <tr>
-                <th>ID</th>
+                <th>ORDER ID</th>
+                <th>USER</th>
                 <th>DATE</th>
                 <th>TOTAL</th>
                 <th>PAID</th>
@@ -54,8 +53,9 @@ const OrderListScreen = () => {
               {orders.map((order) => (
                 <tr key={order._id}>
                   <td>{order._id}</td>
+                  <td>{order.user && order.user.name}</td>
                   <td>{order.createdAt.substring(0, 10)}</td>
-                  <td>{order.totalPrice}</td>
+                  <td>${order.totalPrice}</td>
                   <td>
                     {order.isPaid ? (
                       order.paidAt.substring(0, 10)
