@@ -41,7 +41,6 @@ const OrderScreen = () => {
     "client-id": paypalClientId,
     currency: "USD",
     intent: "capture",
-    // "data-client-token": "abc123xyz==",
   };
 
   //   // Calculate prices again?
@@ -64,7 +63,6 @@ const OrderScreen = () => {
       if (!paypalClientId) {
         const res = await axios.get("/api/config/paypal");
         const clientId = res.data;
-        console.log(clientId);
         setPaypalClientId(clientId);
       }
     };
@@ -79,12 +77,11 @@ const OrderScreen = () => {
   }, [dispatch, id, order, successPay, successDeliver, paypalClientId]);
 
   const successPaymentHandler = (paymentResult) => {
-    console.log(paymentResult);
     dispatch(payOrder(id, paymentResult));
   };
 
   const deliverHandler = () => {
-    dispatch(deliverOrder);
+    dispatch(deliverOrder(order));
   };
 
   return loading ? (

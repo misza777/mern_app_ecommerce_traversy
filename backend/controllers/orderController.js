@@ -81,7 +81,7 @@ const updateOrderToPaid = asyncHandler(async (req, res) => {
   }
 });
 
-// @desc Update order to paid
+// @desc Update order to delivered
 // @route PUT /api/orders/:id/deliver
 // @access Private/Admin
 
@@ -91,8 +91,8 @@ const updateOrderToDelivered = asyncHandler(async (req, res) => {
   if (order) {
     order.isDelivered = true;
     order.deliveredAt = Date.now();
-
     const updatedOrder = await order.save();
+    console.log(updatedOrder);
     res.json(updatedOrder);
   } else {
     res.status(404);

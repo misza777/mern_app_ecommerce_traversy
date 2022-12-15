@@ -202,13 +202,19 @@ export const deliverOrder = (order) => async (dispatch, getState) => {
       userLogin: { userInfo },
     } = getState();
 
+    console.log(userInfo);
+
     const config = {
       headers: {
         Authorization: `Bearer ${userInfo.token}`,
+        "Content-Type": "application/json",
       },
     };
 
-    const { data } = await axios.put(`/api/orders/${order._id}/pay`, config);
+    const { data } = await axios.put(
+      `/api/orders/${order._id}/deliver`,
+      config
+    );
 
     dispatch({
       type: ORDER_DELIVER_SUCCESS,
