@@ -1,6 +1,7 @@
 import path from "path";
 import express from "express";
 import dotenv from "dotenv";
+import morgan from "morgan";
 // trzeba dodac .js
 import connectDB from "./config/db.js";
 import colors from "colors";
@@ -16,21 +17,32 @@ connectDB();
 
 const app = express();
 
+//morgan middleware
+if (process.env.NODE_ENV === "development") {
+  app.use(morgan("dev"));
+}
+
 //allows to accept json data in the body
 app.use(express.json());
 
-// middleware logging path and method
-app.use((req, res, next) => {
-  console.log(req.path, req.method);
-  next();
-});
+// middleware logging path and method similar to morgan
+// app.use((req, res, next) => {
+// console.log(req.path, req.method);
+// next();
+// });
 
 app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE, OPTIONS');
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PATCH, PUT, DELETE, OPTIONS"
+  );
   next();
-  })
+});
 
 // __dirname - current directory
 // path.join - join current directory with /uploads
@@ -77,5 +89,3 @@ app.listen(
       .bold
   )
 );
-
-
