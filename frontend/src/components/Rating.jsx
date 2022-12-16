@@ -50,7 +50,7 @@ const Rating = ({ value, text, color }) => {
           <FaRegStar />
         )}
       </span>
-      <span> from {text && text}</span>
+      {text && <span> from {text && text}</span>}
     </div>
   );
 };
