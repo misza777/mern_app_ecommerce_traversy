@@ -52,9 +52,16 @@ const ProductListScreen = () => {
       navigate(`/admin/product/${createdProduct._id}/edit`);
     } else {
       //keyword '' bo nie ma nic w searchu
-      dispatch(listProducts('', pageNumber));
+      dispatch(listProducts("", pageNumber));
     }
-  }, [dispatch, userInfo, successDelete, successCreate, createdProduct]);
+  }, [
+    dispatch,
+    userInfo,
+    successDelete,
+    successCreate,
+    createdProduct,
+    pageNumber,
+  ]);
 
   //successDelete jest w dependencies bo jak sie pojawi to chcemy odswiezyc liste produktow
 
