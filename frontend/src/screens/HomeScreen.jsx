@@ -6,6 +6,7 @@ import { listProducts } from "../actions/productActions";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 import Paginate from "../components/Paginate";
+import ProductCarousel from "../components/ProductCarousel";
 import { useParams } from "react-router-dom";
 
 const HomeScreen = () => {
@@ -26,8 +27,10 @@ const HomeScreen = () => {
   }, [dispatch, keyword, pageNumber]);
 
   // check loading for spinner/loader
+  //  jak nie ma keyword to nie pokazuj carousel
   return (
     <>
+      {!keyword && <ProductCarousel />}
       <h1>Latest Products</h1>
       {loading ? (
         <Loader />
