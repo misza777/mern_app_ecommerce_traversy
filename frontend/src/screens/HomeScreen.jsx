@@ -22,7 +22,7 @@ const HomeScreen = () => {
   const { loading, error, products, page, pages } = productList;
 
   useEffect(() => {
-    dispatch(listProducts(keyword));
+    dispatch(listProducts(keyword, pageNumber));
   }, [dispatch, keyword, pageNumber]);
 
   // check loading for spinner/loader
